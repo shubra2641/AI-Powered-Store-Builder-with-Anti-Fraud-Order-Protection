@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests\Admin;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdatePageRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'is_active' => 'required|boolean',
+            'translations' => 'required|array',
+            'translations.*.title' => 'required|string|max:255',
+            'translations.*.content' => 'required|string',
+        ];
+    }
+}
