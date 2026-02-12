@@ -7,6 +7,9 @@ use App\Models\DS_LandingPageTranslation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Models\DS_LandingPageComponent;
+use App\Traits\DS_UploadHelper;
+use App\Services\Tracking\PixelManager;
 
 class DS_LandingPageService
 {
@@ -152,7 +155,7 @@ class DS_LandingPageService
     protected function renderHtml(array $sections, bool $isRtl = false): string
     {
         $html = '';
-        $components = \App\Models\DS_LandingPageComponent::all()->keyBy('blade_template');
+        $components = DS_LandingPageComponent::all()->keyBy('blade_template');
 
         foreach ($sections as $section) {
             $template = $section['blade_template'] ?? null;
@@ -199,8 +202,6 @@ class DS_LandingPageService
         return DS_LandingPage::where('slug', $slug)->with('translations')->first();
     }
 
-    use \App\Traits\DS_UploadHelper;
-
     /**
      * Upload media file for landing page.
      * 
@@ -239,7 +240,7 @@ class DS_LandingPageService
             'sections' => $processedSections,
             'isRtl' => $isRtl,
             'isExport' => true,
-            'trackingPixels' => (new \App\Services\Tracking\PixelManager())->render($landing_page->user_id)
+            'trackingPixels' => (new PixelManager())->render($landing_page->user_id)
         ])->render();
 
         $tempFile = tempnam(sys_get_temp_dir(), 'export_');
@@ -258,7 +259,7 @@ class DS_LandingPageService
      */
     protected function prepareSectionsForExport(array $rawSections, bool $isRtl): array
     {
-        $components = \App\Models\DS_LandingPageComponent::all()->keyBy('blade_template');
+        $components = DS_LandingPageComponent::all()->keyBy('blade_template');
         $processedSections = [];
 
         foreach ($rawSections as $section) {

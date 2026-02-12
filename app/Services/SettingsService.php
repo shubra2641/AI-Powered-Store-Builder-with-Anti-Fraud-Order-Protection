@@ -12,6 +12,8 @@ use Illuminate\Support\Collection;
 use App\Mail\BaseEmailMailable;
 use App\Models\EmailTemplate;
 use App\Models\User;
+use App\Traits\DS_UploadHelper;
+use Illuminate\Http\UploadedFile;
 
 /**
  * Class SettingsService
@@ -19,7 +21,6 @@ use App\Models\User;
  */
 class SettingsService
 {
-    use \App\Traits\DS_UploadHelper;
 
     protected const CACHE_KEY = 'ds_settings_all';
 
@@ -144,7 +145,7 @@ class SettingsService
     {
         if ($group === 'general' && !$languageId) {
             foreach (['site_logo', 'site_favicon'] as $fileKey) {
-                if (isset($data[$fileKey]) && $data[$fileKey] instanceof \Illuminate\Http\UploadedFile) {
+                if (isset($data[$fileKey]) && $data[$fileKey] instanceof UploadedFile) {
                     $oldFile = $this->get($fileKey);
                     $data[$fileKey] = $this->uploadFile($data[$fileKey], 'settings', $oldFile);
                 }

@@ -34,14 +34,20 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
-        if ($this->authService->login($request->validated(), $request->filled('remember'))) {
+        $status = $this->authService->login($request->validated(), $request->filled('remember'));
+
+        if ($status === 'SUCCESS') {
             $request->session()->regenerate();
-            
             return $this->authenticated();
         }
 
+        if ($status === 'INACTIVE') {
+            $this->notifyError('auth.account_inactive_check_email');
+            return back()->withInput();
+        }
+
         $this->notifyError('auth.failed');
-        return back()->withErrors(['email' => __('auth.failed')]);
+        return back()->withErrors(['email' => __('auth.failed')])->withInput();
     }
 
     protected function authenticated(): RedirectResponse

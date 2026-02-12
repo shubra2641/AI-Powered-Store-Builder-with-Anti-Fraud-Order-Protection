@@ -5,6 +5,8 @@ namespace App\Services\Communication;
 use App\Models\DS_Integration;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Traits\LoadsIntegrationSettings;
+
 
 /**
  * Class WhatsappService
@@ -16,7 +18,6 @@ use Illuminate\Support\Facades\Log;
  */
 class WhatsappService
 {
-    use \App\Traits\LoadsIntegrationSettings;
 
     /**
      * WhatsappService constructor.

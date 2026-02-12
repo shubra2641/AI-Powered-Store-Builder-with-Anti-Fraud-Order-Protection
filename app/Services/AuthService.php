@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SystemNotification;
+use App\Events\UserRegistered;
+use App\Events\UserActivated;
+use App\Models\PasswordResetToken;
+use Illuminate\Support\Facades\Password;
 
 /**
  * Class AuthService
@@ -57,7 +61,7 @@ class AuthService
             $this->subscriptionService->initiatePurchase($user, $defaultPlan, 'free');
         }
 
-        \App\Events\UserRegistered::dispatch($user);
+        UserRegistered::dispatch($user);
 
         return $user;
     }
@@ -66,14 +70,18 @@ class AuthService
      * Activate a user account by token.
      *
      * @param string $token Activation token.
-     * @return User|null The activated user or null if failed.
+     * @return string Status code of activation.
      */
-    public function activate(string $token): ?User
+    public function activate(string $token): string
     {
         $user = User::where('activation_token', $token)->first();
 
         if (!$user) {
-            return null;
+            return 'INVALID_TOKEN';
+        }
+
+        if ($user->is_active) {
+            return 'ALREADY_ACTIVE';
         }
 
         DB::transaction(function () use ($user) {
@@ -84,19 +92,36 @@ class AuthService
             ]);
         });
 
-        \App\Events\UserActivated::dispatch($user);
+        UserActivated::dispatch($user);
 
-        return $user;
+        return 'SUCCESS';
     }
 
     /**
      * Attempt login.
      */
-    public function login(array $credentials, bool $remember = false): bool
+    /**
+     * Attempt login and return detailed status.
+     * 
+     * @param array $credentials
+     * @param bool $remember
+     * @return string
+     */
+    public function login(array $credentials, bool $remember = false): string
     {
-        $credentials['is_active'] = true;
+        $user = User::where('email', $credentials['email'] ?? '')->first();
 
-        return Auth::attempt($credentials, $remember);
+        if (!$user || !Hash::check($credentials['password'] ?? '', $user->password)) {
+            return 'INVALID_CREDENTIALS';
+        }
+
+        if (!$user->is_active) {
+            return 'INACTIVE';
+        }
+
+        Auth::login($user, $remember);
+
+        return 'SUCCESS';
     }
 
     /**
@@ -109,10 +134,10 @@ class AuthService
      */
     public function resetPassword(string $email, string $password, string $token): string
     {
-        $reset = \App\Models\PasswordResetToken::where('email', $email)->first();
+        $reset = PasswordResetToken::where('email', $email)->first();
 
         if (!$reset || !Hash::check($token, $reset->token)) {
-            return \Illuminate\Support\Facades\Password::INVALID_TOKEN;
+            return Password::INVALID_TOKEN;
         }
 
         $user = User::where('email', $email)->first();
@@ -121,10 +146,10 @@ class AuthService
             $reset->delete();
             
             $this->emailService->sendTemplateEmail($user, 'password_changed_notification');
-            return \Illuminate\Support\Facades\Password::PASSWORD_RESET;
+            return Password::PASSWORD_RESET;
         }
 
-        return \Illuminate\Support\Facades\Password::INVALID_USER;
+        return Password::INVALID_USER;
     }
 
     /**
@@ -143,7 +168,7 @@ class AuthService
 
         $token = Str::random(60);
         
-        \App\Models\PasswordResetToken::updateOrCreate(
+        PasswordResetToken::updateOrCreate(
             ['email' => $user->email],
             ['token' => Hash::make($token), 'created_at' => now()]
         );

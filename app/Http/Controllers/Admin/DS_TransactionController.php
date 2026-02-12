@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DS_BalanceTransaction;
 use App\Models\User;
 use Illuminate\View\View;
+use App\Services\TransactionService;
 
 class DS_TransactionController extends Controller
 {
@@ -13,7 +14,7 @@ class DS_TransactionController extends Controller
      * Display a listing of balance transactions.
      */
     public function __construct(
-        protected \App\Services\TransactionService $transactionService
+        protected TransactionService $transactionService
     ) {}
 
     /**

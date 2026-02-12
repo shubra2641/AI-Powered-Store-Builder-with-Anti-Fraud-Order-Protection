@@ -116,11 +116,14 @@ class DS_CaptchaService
         }
 
         try {
-            $verifyResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret'   => $secret,
-                'response' => $response,
-                'remoteip' => request()->ip(),
-            ]);
+            $verifyResponse = Http::asForm()
+                ->timeout(5)
+                ->withoutVerifying()
+                ->post('https://www.google.com/recaptcha/api/siteverify', [
+                    'secret'   => $secret,
+                    'response' => $response,
+                    'remoteip' => request()->ip(),
+                ]);
 
             return $verifyResponse->json()['success'] ?? false;
         } catch (\Exception $e) {

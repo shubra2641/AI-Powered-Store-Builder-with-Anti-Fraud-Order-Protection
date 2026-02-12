@@ -10,7 +10,7 @@ use App\Http\Requests\Admin\PlanRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-
+use App\Services\StatisticService;
 use App\Models\DS_BalanceTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
@@ -20,7 +20,7 @@ class PlanController extends Controller
 {
     public function __construct(
         protected PlanService $planService,
-        protected \App\Services\StatisticService $statisticService
+        protected StatisticService $statisticService
     ) {}
 
     /**

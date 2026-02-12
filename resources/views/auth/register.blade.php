@@ -66,6 +66,12 @@
                 </div>
             </div>
 
+            <!-- reCAPTCHA Widget -->
+            {!! captcha_render_widget() !!}
+            @error('g-recaptcha-response')
+                <div class="ds-form-error text-center mb-2">{{ $message }}</div>
+            @enderror
+
             <!-- Submit Button -->
             <button type="submit" class="btn-gradient w-full py-3 fs-md font-800 mt-2">
                 <i class="fas fa-user-plus me-2"></i> {{ __('auth.register_btn') }}

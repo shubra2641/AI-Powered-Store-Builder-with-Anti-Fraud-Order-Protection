@@ -9,6 +9,8 @@ use App\Traits\DS_TranslationHelper;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use App\Services\Tracking\PixelManager;
+use App\Models\User;
 
 /**
  * Class RegisterController
@@ -22,12 +24,20 @@ class RegisterController extends Controller
      * Create a new RegisterController instance.
      */
     public function __construct(
-        protected AuthService $authService
+        protected AuthService $authService,
+        protected PixelManager $pixelManager
     ) {}
 
     public function showRegistrationForm(): View
     {
-        return view('auth.register');
+        // For guest pages, we usually load pixels configured by the main admin
+        $adminId = User::whereHas('role', function ($query) {
+            $query->where('slug', 'admin');
+        })->first()?->id ?? 1;
+
+        $trackingPixels = $this->pixelManager->render($adminId);
+
+        return view('auth.register', compact('trackingPixels'));
     }
 
     public function register(RegisterRequest $request): RedirectResponse
@@ -41,7 +51,7 @@ class RegisterController extends Controller
         } catch (\Exception $e) {
             Log::error('User registration failed: ' . $e->getMessage());
             
-            $this->notifyError('auth.registration_failed');
+            $this->notifyError($e->getMessage() ?: 'auth.registration_failed');
             
             return redirect()->back()->withInput();
         }

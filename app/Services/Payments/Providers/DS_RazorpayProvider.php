@@ -10,6 +10,7 @@ use Exception;
 use App\Traits\DS_CurrencyHelper;
 use App\Services\Subscriptions\SubscriptionService;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class DS_RazorpayProvider implements DS_PaymentProviderInterface
 {
@@ -78,7 +79,7 @@ class DS_RazorpayProvider implements DS_PaymentProviderInterface
 
             return true;
         } catch (Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Razorpay Webhook Error: ' . $e->getMessage());
+            Log::error('Razorpay Webhook Error: ' . $e->getMessage());
             return false;
         }
     }

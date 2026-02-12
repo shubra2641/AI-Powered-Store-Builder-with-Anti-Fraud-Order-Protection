@@ -23,10 +23,6 @@
     
     @stack('styles')
 
-    @if(isset($trackingPixels))
-        {!! $trackingPixels !!}
-    @endif
-
     <script>
         window.APP_URL = "{{ url('/') }}";
     </script>

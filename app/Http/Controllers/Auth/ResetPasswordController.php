@@ -7,12 +7,13 @@ use App\Models\PasswordResetToken;
 use App\Models\User;
 use App\Services\EmailService;
 use App\Traits\DS_TranslationHelper;
+use App\Services\AuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
-
+use Illuminate\Support\Facades\Password;
 /**
  * Class ResetPasswordController
  * Handles resetting user passwords using tokens.
@@ -26,7 +27,7 @@ class ResetPasswordController extends Controller
      */
     public function __construct(
         protected EmailService $emailService,
-        protected \App\Services\AuthService $authService
+        protected AuthService $authService
     ) {}
 
     /**
@@ -53,12 +54,12 @@ class ResetPasswordController extends Controller
             $request->token
         );
 
-        if ($status === \Illuminate\Support\Facades\Password::PASSWORD_RESET) {
+        if ($status === Password::PASSWORD_RESET) {
             $this->notifySuccess('auth.password_reset_success');
             return redirect()->route('login');
         }
 
-        $this->notifyError($status === \Illuminate\Support\Facades\Password::INVALID_USER 
+        $this->notifyError($status === Password::INVALID_USER 
             ? 'auth.invalid_email' 
             : 'auth.invalid_password_token');
 

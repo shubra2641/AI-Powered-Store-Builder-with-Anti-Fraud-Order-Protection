@@ -10,6 +10,7 @@ use App\Models\DS_AIKey;
 use App\Models\DS_BalanceTransaction;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class StatisticService
 {
@@ -21,7 +22,7 @@ class StatisticService
     public function getDashboardMetrics(): array
     {
         // Try to get from cache
-        $stats = \Illuminate\Support\Facades\Cache::get('dashboard_stats');
+        $stats = Cache::get('dashboard_stats');
 
         if ($stats) {
             return $stats;
@@ -29,7 +30,7 @@ class StatisticService
 
         // Fallback: Calculate and cache if not present (e.g. first run)
         $stats = $this->calculateDashboardMetrics();
-        \Illuminate\Support\Facades\Cache::put('dashboard_stats', $stats, now()->addHours(1));
+        Cache::put('dashboard_stats', $stats, now()->addHours(1));
 
         return $stats;
     }
@@ -299,7 +300,7 @@ class StatisticService
      */
     public function getPlansStats(): array
     {
-        return \Illuminate\Support\Facades\Cache::remember('admin_plans_stats', 3600, function () {
+        return Cache::remember('admin_plans_stats', 3600, function () {
             $plans = Plan::all();
             $totalUsers = User::count();
             $activeSubscribers = User::whereHas('subscription')->count();

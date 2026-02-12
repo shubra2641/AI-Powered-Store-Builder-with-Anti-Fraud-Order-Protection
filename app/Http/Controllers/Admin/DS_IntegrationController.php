@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Services\DS_IntegrationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use App\Services\Integrations\DS_IntegrationFactory;
+use App\Services\Payments\DS_PaymentFactory;
 use App\Models\DS_PaymentGateway;
 
 class DS_IntegrationController extends Controller
@@ -133,11 +134,11 @@ class DS_IntegrationController extends Controller
     protected function getServiceValidationRules(string $service): array
     {
         try {
-            $provider = \App\Services\Integrations\DS_IntegrationFactory::make($service);
+            $provider = DS_IntegrationFactory::make($service);
             $fields = $provider->getFormFields();
         } catch (\Exception $e) {
             try {
-                $provider = \App\Services\Payments\DS_PaymentFactory::make($service);
+                $provider = DS_PaymentFactory::make($service);
                 $fields = $provider->getFormFields();
             } catch (\Exception $ex) {
                 return [];

@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $adminRole = Role::where('slug', 'admin')->first();
+        $userRole = Role::where('slug', 'user')->first();
         $en = Language::where('code', 'en')->first();
 
 
@@ -33,6 +34,17 @@ class DatabaseSeeder extends Seeder
                 'email' => 'admin@dropsaas.com',
                 'password' => Hash::make('password'),
                 'role_id' => $adminRole?->id,
+                'language_id' => $en?->id,
+                'is_active' => true,
+            ]);
+        }
+
+        if (!User::where('email', 'user@dropsaas.com')->exists()) {
+            User::create([
+                'name' => 'User',
+                'email' => 'user@dropsaas.com',
+                'password' => Hash::make('password'),
+                'role_id' => $userRole?->id,
                 'language_id' => $en?->id,
                 'is_active' => true,
             ]);

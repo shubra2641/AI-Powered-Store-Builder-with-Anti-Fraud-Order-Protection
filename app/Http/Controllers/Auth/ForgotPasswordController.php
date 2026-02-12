@@ -8,6 +8,7 @@ use App\Models\PasswordResetToken;
 use App\Models\User;
 use App\Services\EmailService;
 use App\Traits\DS_TranslationHelper;
+use App\Services\AuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ class ForgotPasswordController extends Controller
      */
     public function __construct(
         protected EmailService $emailService,
-        protected \App\Services\AuthService $authService
+        protected AuthService $authService
     ) {}
 
     /**

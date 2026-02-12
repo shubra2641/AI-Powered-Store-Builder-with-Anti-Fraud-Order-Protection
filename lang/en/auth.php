@@ -10,6 +10,11 @@ return [
     'invalid_password_token' => 'This password reset token is invalid.',
     'password_reset_success' => 'Your password has been reset successfully!',
     'recaptcha_failed' => 'Please complete the reCAPTCHA correctly.',
+    'registration_failed' => 'Registration failed. Please try again or contact support.',
+    'account_inactive_check_email' => 'Your account is inactive. Please check your email for the activation link.',
+    'account_already_active' => 'Your account is already active. Please login.',
+    'activation_failed_invalid_token' => 'Invalid or expired activation token.',
+    'invalid_email' => 'We could not find a user with that email address.',
     
     // Titles
     'login_title' => 'Login to DropSaaS',

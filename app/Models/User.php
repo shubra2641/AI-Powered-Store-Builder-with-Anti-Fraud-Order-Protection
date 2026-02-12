@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Support\Str;
 use App\Traits\Presenters\DS_UserPresenter;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -104,6 +104,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function regenerateActivationToken(): void
     {
-        $this->update(['activation_token' => \Illuminate\Support\Str::random(60)]);
+        $this->update(['activation_token' => Str::random(60)]);
     }
 }

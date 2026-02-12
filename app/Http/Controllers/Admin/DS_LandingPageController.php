@@ -19,6 +19,9 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use App\Services\DS_ComponentRenderer;
 use App\Services\Tracking\PixelManager;
+use App\Models\DS_LandingPageComponent;
+use App\Models\DS_Integration;
+use App\Services\Tracking\FacebookCapiService;
 
 class DS_LandingPageController extends Controller
 {
@@ -69,7 +72,7 @@ class DS_LandingPageController extends Controller
      */
     public function builder(DS_LandingPage $landing_page): View
     {
-        $components = \App\Models\DS_LandingPageComponent::all();
+        $components = DS_LandingPageComponent::all();
         $icons = DS_IconHelper::getIcons();
         
         $builderConfig = [
@@ -274,13 +277,13 @@ class DS_LandingPageController extends Controller
         }
 
         // Facebook CAPI Integration (Server-side track)
-        $capiSettings = \App\Models\DS_Integration::where('user_id', $landingPage->user_id)
+        $capiSettings = DS_Integration::where('user_id', $landingPage->user_id)
             ->where('service', 'facebook_capi')
             ->where('is_active', true)
             ->first();
 
         if ($capiSettings) {
-             (new \App\Services\Tracking\FacebookCapiService($capiSettings->settings))->sendEvent('PageView');
+             (new FacebookCapiService($capiSettings->settings))->sendEvent('PageView');
         }
 
         return view('landing.public', [
@@ -297,7 +300,7 @@ class DS_LandingPageController extends Controller
      */
     protected function prepareSections(array $rawSections, bool $isRtl): array
     {
-        $components = \App\Models\DS_LandingPageComponent::all()->keyBy('blade_template');
+        $components = DS_LandingPageComponent::all()->keyBy('blade_template');
         $processedSections = [];
 
         foreach ($rawSections as $section) {

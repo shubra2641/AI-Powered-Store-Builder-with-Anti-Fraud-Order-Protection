@@ -10,6 +10,11 @@ return [
     'invalid_password_token' => 'رمز إعادة تعيين كلمة المرور هذا غير صالح.',
     'password_reset_success' => 'تم إعادة تعيين كلمة المرور الخاصة بك بنجاح!',
     'recaptcha_failed' => 'يرجى إكمال اختبار التحقق (reCAPTCHA) بشكل صحيح.',
+    'registration_failed' => 'فشل التسجيل. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.',
+    'account_inactive_check_email' => 'حسابك غير نشط. يرجى التحقق من بريدك الإلكتروني للحصول على رابط التنشيط.',
+    'account_already_active' => 'حسابك نشط بالفعل. يرجى تسجيل الدخول.',
+    'activation_failed_invalid_token' => 'رمز التنشيط غير صالح أو منتهي الصلاحية.',
+    'invalid_email' => 'لم نتمكن من العثور على مستخدم بهذا العنوان البريدي.',
     
     // العناوين
     'login_title' => 'تسجيل الدخول إلى DropSaaS',

@@ -5,6 +5,7 @@ namespace App\Services\Payments\Providers;
 use App\Contracts\DS_PaymentProviderInterface;
 use App\DTOs\DS_PaymentResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 /**
  * Class DS_BankTransferProvider
@@ -28,7 +29,7 @@ class DS_BankTransferProvider implements DS_PaymentProviderInterface
     public function createPayment(float $amount, string $currency, array $metadata = []): DS_PaymentResponse
     {
         return DS_PaymentResponse::successful(
-            transactionId: 'BT-' . strtoupper(\Illuminate\Support\Str::orderedUuid()),
+            transactionId: 'BT-' . strtoupper(Str::orderedUuid()),
             metadata: [
                 'details'        => $this->config['details'] ?? '',
                 'require_proof'  => $this->config['require_proof'] ?? false,
